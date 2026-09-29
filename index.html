@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#6c5ce7">
+<meta name="description" content="QR Master - বাংলা ও ইংরেজি QR Code Generator">
 <title>QR Master - QR Code Generator</title>
 
 <style>
@@ -11,7 +12,7 @@
   box-sizing:border-box;
   margin:0;
   padding:0;
-  font-family:Arial,"Noto Sans Bengali",sans-serif;
+  font-family:Arial,"Noto Sans Bengali","Segoe UI",sans-serif;
 }
 
 body{
@@ -196,10 +197,15 @@ textarea{
   font-size:16px;
   font-weight:bold;
   cursor:pointer;
+  transition:.2s;
 }
 
-.generate:active,
-.action:active{
+.generate:disabled{
+  opacity:.7;
+  cursor:wait;
+}
+
+.generate:active{
   transform:scale(.98);
 }
 
@@ -246,6 +252,33 @@ textarea{
   max-width:210px;
   max-height:210px;
   display:block;
+}
+
+.qr-loading{
+  width:210px;
+  height:210px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  color:#6c5ce7;
+  font-size:13px;
+  gap:10px;
+}
+
+.spinner{
+  width:32px;
+  height:32px;
+  border:4px solid #e5e7eb;
+  border-top-color:#6c5ce7;
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+
+@keyframes spin{
+  to{
+    transform:rotate(360deg);
+  }
 }
 
 .actions{
@@ -370,6 +403,8 @@ textarea{
   transition:.3s;
   z-index:9999;
   pointer-events:none;
+  max-width:90%;
+  text-align:center;
 }
 
 .toast.show{
@@ -415,7 +450,7 @@ textarea{
 
   <div class="intro">
     <h2>আপনার QR Code তৈরি করুন</h2>
-    <p>দ্রুত, সহজ এবং সুন্দরভাবে</p>
+    <p>বাংলা, English এবং Emoji সহ দ্রুত QR তৈরি করুন</p>
   </div>
 
 </header>
@@ -424,47 +459,33 @@ textarea{
 
 <div class="tabs">
 
-  <button
-    class="tab active"
-    onclick="selectType('url',this)">
+  <button class="tab active" onclick="selectType('url',this)">
     🔗 Website
   </button>
 
-  <button
-    class="tab"
-    onclick="selectType('text',this)">
+  <button class="tab" onclick="selectType('text',this)">
     📝 Text
   </button>
 
-  <button
-    class="tab"
-    onclick="selectType('phone',this)">
+  <button class="tab" onclick="selectType('phone',this)">
     📞 Phone
   </button>
 
-  <button
-    class="tab"
-    onclick="selectType('email',this)">
+  <button class="tab" onclick="selectType('email',this)">
     ✉️ Email
   </button>
 
-  <button
-    class="tab"
-    onclick="selectType('wifi',this)">
+  <button class="tab" onclick="selectType('wifi',this)">
     📶 Wi-Fi
   </button>
 
-  <button
-    class="tab"
-    onclick="selectType('contact',this)">
+  <button class="tab" onclick="selectType('contact',this)">
     👤 Contact
   </button>
 
 </div>
 
 <div class="panel">
-
-  <!-- URL -->
 
   <div class="type active" id="url">
 
@@ -477,21 +498,15 @@ textarea{
 
   </div>
 
-
-  <!-- TEXT -->
-
   <div class="type" id="text">
 
     <label>Your Text</label>
 
     <textarea
       id="textInput"
-      placeholder="আপনার লেখা এখানে লিখুন..."></textarea>
+      placeholder="বাংলা বা English লেখা এখানে লিখুন..."></textarea>
 
   </div>
-
-
-  <!-- PHONE -->
 
   <div class="type" id="phone">
 
@@ -503,9 +518,6 @@ textarea{
       placeholder="+8801XXXXXXXXX">
 
   </div>
-
-
-  <!-- EMAIL -->
 
   <div class="type" id="email">
 
@@ -524,9 +536,6 @@ textarea{
       placeholder="Email subject">
 
   </div>
-
-
-  <!-- WIFI -->
 
   <div class="type" id="wifi">
 
@@ -548,17 +557,9 @@ textarea{
 
     <select id="wifiSecurity">
 
-      <option value="WPA">
-        WPA/WPA2
-      </option>
-
-      <option value="WEP">
-        WEP
-      </option>
-
-      <option value="nopass">
-        No Password
-      </option>
+      <option value="WPA">WPA/WPA2</option>
+      <option value="WEP">WEP</option>
+      <option value="nopass">No Password</option>
 
     </select>
 
@@ -575,9 +576,6 @@ textarea{
 
   </div>
 
-
-  <!-- CONTACT -->
-
   <div class="type" id="contact">
 
     <label>Full Name</label>
@@ -585,7 +583,7 @@ textarea{
     <input
       id="contactName"
       type="text"
-      placeholder="Your name">
+      placeholder="আপনার নাম / Your name">
 
     <label>Phone</label>
 
@@ -610,9 +608,9 @@ textarea{
 
   </div>
 
-
   <button
     class="generate"
+    id="generateBtn"
     onclick="generateQR()">
 
     ✨ Generate QR Code
@@ -620,9 +618,6 @@ textarea{
   </button>
 
 </div>
-
-
-<!-- QR RESULT -->
 
 <div class="qr-card" id="qrCard">
 
@@ -634,44 +629,25 @@ textarea{
 
   <div class="actions">
 
-    <button
-      class="action"
-      onclick="downloadQR()">
-
+    <button class="action" onclick="downloadQR()">
       ⬇️ Download
-
     </button>
 
-    <button
-      class="action"
-      onclick="shareQR()">
-
+    <button class="action" onclick="shareQR()">
       📤 Share
-
     </button>
 
-    <button
-      class="action"
-      onclick="copyQRText()">
-
+    <button class="action" onclick="copyQRText()">
       📋 Copy
-
     </button>
 
-    <button
-      class="action"
-      onclick="generateQR()">
-
+    <button class="action" onclick="generateQR()">
       🔄 Refresh
-
     </button>
 
   </div>
 
 </div>
-
-
-<!-- HISTORY -->
 
 <div class="history">
 
@@ -679,12 +655,8 @@ textarea{
 
     <h2>📜 Recent QR</h2>
 
-    <button
-      class="clear"
-      onclick="clearHistory()">
-
+    <button class="clear" onclick="clearHistory()">
       Clear
-
     </button>
 
   </div>
@@ -692,7 +664,6 @@ textarea{
   <div id="historyList"></div>
 
 </div>
-
 
 <div class="footer">
 
@@ -708,22 +679,16 @@ textarea{
 
 </div>
 
-
-<div
-  class="toast"
-  id="toast">
-</div>
-
+<div class="toast" id="toast"></div>
 
 <!-- QR CODE LIBRARY -->
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <script>
 
 let currentType = "url";
-
 let currentQRText = "";
+let generating = false;
 
 let history =
   JSON.parse(
@@ -742,30 +707,23 @@ function selectType(type,button){
   document
     .querySelectorAll(".type")
     .forEach(function(el){
-
       el.classList.remove("active");
-
     });
 
   const selected =
     document.getElementById(type);
 
   if(selected){
-
     selected.classList.add("active");
-
   }
 
   document
     .querySelectorAll(".tab")
     .forEach(function(el){
-
       el.classList.remove("active");
-
     });
 
   button.classList.add("active");
-
 }
 
 
@@ -774,8 +732,6 @@ function selectType(type,button){
 ========================= */
 
 function getQRText(){
-
-  /* URL */
 
   if(currentType === "url"){
 
@@ -786,52 +742,41 @@ function getQRText(){
       .trim();
 
     if(!value){
-
       showToast("Website URL লিখুন");
-
       return null;
-
     }
 
     if(
       !value.startsWith("http://") &&
       !value.startsWith("https://")
     ){
-
-      value =
-        "https://" + value;
-
+      value = "https://" + value;
     }
 
     return value;
-
   }
 
-
-  /* TEXT */
 
   if(currentType === "text"){
 
     const value =
       document
       .getElementById("textInput")
-      .value
-      .trim();
+      .value;
 
-    if(!value){
-
-      showToast("Text লিখুন");
-
+    if(!value.trim()){
+      showToast("বাংলা বা English Text লিখুন");
       return null;
-
     }
 
-    return value;
+    /*
+      Unicode text সরাসরি পাঠানো হচ্ছে।
+      বাংলা অক্ষর এখানে পরিবর্তন করা হচ্ছে না।
+    */
 
+    return value;
   }
 
-
-  /* PHONE */
 
   if(currentType === "phone"){
 
@@ -842,19 +787,13 @@ function getQRText(){
       .trim();
 
     if(!value){
-
       showToast("Phone number লিখুন");
-
       return null;
-
     }
 
     return "tel:" + value;
-
   }
 
-
-  /* EMAIL */
 
   if(currentType === "email"){
 
@@ -871,11 +810,8 @@ function getQRText(){
       .trim();
 
     if(!email){
-
       showToast("Email address লিখুন");
-
       return null;
-
     }
 
     return (
@@ -884,11 +820,8 @@ function getQRText(){
       "?subject=" +
       encodeURIComponent(subject)
     );
-
   }
 
-
-  /* WIFI */
 
   if(currentType === "wifi"){
 
@@ -914,11 +847,8 @@ function getQRText(){
       .checked;
 
     if(!ssid){
-
       showToast("Wi-Fi name লিখুন");
-
       return null;
-
     }
 
     return (
@@ -929,11 +859,8 @@ function getQRText(){
       ";H:" + (hidden ? "true" : "false") +
       ";;"
     );
-
   }
 
-
-  /* CONTACT */
 
   if(currentType === "contact"){
 
@@ -962,13 +889,8 @@ function getQRText(){
       .trim();
 
     if(!name && !phone && !email){
-
-      showToast(
-        "Contact information দিন"
-      );
-
+      showToast("Contact information দিন");
       return null;
-
     }
 
     return (
@@ -980,9 +902,9 @@ function getQRText(){
       "ORG:" + org + "\n" +
       "END:VCARD"
     );
-
   }
 
+  return null;
 }
 
 
@@ -1007,65 +929,106 @@ function escapeWifi(value){
 
 function generateQR(){
 
-  const text =
-    getQRText();
-
-  if(!text){
-
+  if(generating){
     return;
-
   }
 
-  currentQRText =
-    text;
+  const text = getQRText();
+
+  if(!text){
+    return;
+  }
 
   const qrBox =
     document.getElementById("qrcode");
 
-  qrBox.innerHTML = "";
+  const button =
+    document.getElementById("generateBtn");
 
   if(typeof QRCode === "undefined"){
 
-    showToast(
-      "QR Library লোড হয়নি"
-    );
+    showToast("QR Library লোড হচ্ছে, একটু অপেক্ষা করুন...");
+
+    setTimeout(function(){
+      generateQR();
+    },700);
 
     return;
-
   }
 
-  new QRCode(qrBox,{
+  generating = true;
 
-    text:text,
+  button.disabled = true;
+  button.innerHTML = "⏳ Generating...";
 
-    width:210,
-
-    height:210,
-
-    colorDark:"#111827",
-
-    colorLight:"#ffffff",
-
-    correctLevel:
-      QRCode.CorrectLevel.H
-
-  });
-
+  qrBox.innerHTML = `
+    <div class="qr-loading">
+      <div class="spinner"></div>
+      <div>QR Code তৈরি হচ্ছে...</div>
+    </div>
+  `;
 
   document
     .getElementById("qrCard")
     .classList.add("show");
 
 
-  addHistory(
-    text,
-    currentType
-  );
+  /*
+    setTimeout ব্যবহার করা হয়েছে যাতে
+    Browser আগে Loading UI দেখাতে পারে।
+  */
 
+  setTimeout(function(){
 
-  showToast(
-    "QR Code তৈরি হয়েছে ✓"
-  );
+    try{
+
+      qrBox.innerHTML = "";
+
+      currentQRText = text;
+
+      new QRCode(qrBox,{
+
+        text:text,
+
+        width:210,
+
+        height:210,
+
+        colorDark:"#111827",
+
+        colorLight:"#ffffff",
+
+        correctLevel:QRCode.CorrectLevel.H
+
+      });
+
+      addHistory(text,currentType);
+
+      showToast("QR Code তৈরি হয়েছে ✓");
+
+    }catch(error){
+
+      console.error(error);
+
+      qrBox.innerHTML = `
+        <div class="qr-loading">
+          ❌
+          <div>QR তৈরি করা যায়নি</div>
+        </div>
+      `;
+
+      showToast(
+        "এই লেখাটি QR Code-এ তৈরি করা যাচ্ছে না"
+      );
+
+    }
+
+    generating = false;
+
+    button.disabled = false;
+    button.innerHTML = "✨ Generate QR Code";
+
+  },80);
 
 }
 
@@ -1075,6 +1038,15 @@ function generateQR(){
 ========================= */
 
 function addHistory(text,type){
+
+  /*
+    একই QR বারবার History-তে না রাখার জন্য
+  */
+
+  history =
+    history.filter(function(item){
+      return item.text !== text;
+    });
 
   history.unshift({
 
@@ -1086,8 +1058,7 @@ function addHistory(text,type){
 
   });
 
-  history =
-    history.slice(0,10);
+  history = history.slice(0,10);
 
   localStorage.setItem(
     "qrMasterHistory",
@@ -1095,7 +1066,6 @@ function addHistory(text,type){
   );
 
   renderHistory();
-
 }
 
 
@@ -1114,7 +1084,6 @@ function renderHistory(){
     `;
 
     return;
-
   }
 
   box.innerHTML =
@@ -1149,7 +1118,6 @@ function renderHistory(){
       `;
 
     }).join("");
-
 }
 
 
@@ -1171,9 +1139,7 @@ function getTypeName(type){
 
   };
 
-  return names[type] ||
-    "QR Code";
-
+  return names[type] || "QR Code";
 }
 
 
@@ -1181,9 +1147,7 @@ function deleteHistory(id){
 
   history =
     history.filter(function(item){
-
       return item.id !== id;
-
     });
 
   localStorage.setItem(
@@ -1192,7 +1156,6 @@ function deleteHistory(id){
   );
 
   renderHistory();
-
 }
 
 
@@ -1200,19 +1163,12 @@ function clearHistory(){
 
   if(history.length === 0){
 
-    showToast(
-      "History খালি আছে"
-    );
+    showToast("History খালি আছে");
 
     return;
-
   }
 
-  if(
-    confirm(
-      "সব History মুছে ফেলবেন?"
-    )
-  ){
+  if(confirm("সব History মুছে ফেলবেন?")){
 
     history = [];
 
@@ -1222,17 +1178,13 @@ function clearHistory(){
 
     renderHistory();
 
-    showToast(
-      "History মুছে ফেলা হয়েছে"
-    );
-
+    showToast("History মুছে ফেলা হয়েছে");
   }
-
 }
 
 
 /* =========================
-   FIXED DOWNLOAD
+   DOWNLOAD
 ========================= */
 
 async function downloadQR(){
@@ -1240,88 +1192,46 @@ async function downloadQR(){
   const qrBox =
     document.getElementById("qrcode");
 
-  if(!qrBox){
-
-    showToast(
-      "QR Code পাওয়া যায়নি"
-    );
-
-    return;
-
-  }
-
-
   const canvas =
     qrBox.querySelector("canvas");
 
   const img =
     qrBox.querySelector("img");
 
-
   if(!canvas && !img){
 
-    showToast(
-      "আগে QR তৈরি করুন"
-    );
+    showToast("আগে QR তৈরি করুন");
 
     return;
-
   }
-
 
   try{
 
-    let dataURL = null;
-
-
-    /*
-      প্রথমে Canvas থেকে PNG
-    */
+    let dataURL;
 
     if(canvas){
 
       dataURL =
-        canvas.toDataURL(
-          "image/png"
-        );
+        canvas.toDataURL("image/png");
 
-    }
-
-
-    /*
-      Image fallback
-    */
-
-    else if(img){
+    }else{
 
       const tempCanvas =
-        document.createElement(
-          "canvas"
-        );
+        document.createElement("canvas");
 
       const width =
-        img.naturalWidth ||
-        210;
+        img.naturalWidth || 210;
 
       const height =
-        img.naturalHeight ||
-        210;
+        img.naturalHeight || 210;
 
-      tempCanvas.width =
-        width;
-
-      tempCanvas.height =
-        height;
-
+      tempCanvas.width = width;
+      tempCanvas.height = height;
 
       const ctx =
-        tempCanvas.getContext(
-          "2d"
-        );
+        tempCanvas.getContext("2d");
 
-
-      ctx.fillStyle =
-        "#ffffff";
+      ctx.fillStyle = "#ffffff";
 
       ctx.fillRect(
         0,
@@ -1329,7 +1239,6 @@ async function downloadQR(){
         width,
         height
       );
-
 
       ctx.drawImage(
         img,
@@ -1339,115 +1248,36 @@ async function downloadQR(){
         height
       );
 
-
       dataURL =
-        tempCanvas.toDataURL(
-          "image/png"
-        );
-
+        tempCanvas.toDataURL("image/png");
     }
 
-
-    if(!dataURL){
-
-      throw new Error(
-        "PNG তৈরি করা যায়নি"
-      );
-
-    }
-
-
-    /*
-      Download
-    */
 
     const link =
-      document.createElement(
-        "a"
-      );
+      document.createElement("a");
 
-    link.href =
-      dataURL;
+    link.href = dataURL;
 
     link.download =
       "QR-Master-" +
       Date.now() +
       ".png";
 
-    link.style.display =
-      "none";
-
-
-    document.body.appendChild(
-      link
-    );
+    document.body.appendChild(link);
 
     link.click();
 
+    document.body.removeChild(link);
 
-    setTimeout(function(){
-
-      document.body.removeChild(
-        link
-      );
-
-    },100);
-
-
-    showToast(
-      "QR Code Download হয়েছে ✓"
-    );
-
+    showToast("QR Code Download হয়েছে ✓");
 
   }catch(error){
 
-    console.error(
-      "Download Error:",
-      error
-    );
+    console.error(error);
 
-
-    /*
-      শেষ fallback:
-      নতুন tab-এ QR খুলবে
-    */
-
-    try{
-
-      if(canvas){
-
-        const data =
-          canvas.toDataURL(
-            "image/png"
-          );
-
-        const win =
-          window.open(
-            data,
-            "_blank"
-          );
-
-        if(win){
-
-          showToast(
-            "QR Code খুলেছে — Save করুন"
-          );
-
-          return;
-
-        }
-
-      }
-
-    }catch(e){}
-
-
-    showToast(
-      "Download করা যায়নি"
-    );
+    showToast("Download করা যায়নি");
 
   }
-
 }
 
 
@@ -1458,58 +1288,41 @@ async function downloadQR(){
 async function shareQR(){
 
   const canvas =
-    document.querySelector(
-      "#qrcode canvas"
-    );
+    document.querySelector("#qrcode canvas");
 
   const img =
-    document.querySelector(
-      "#qrcode img"
-    );
-
+    document.querySelector("#qrcode img");
 
   if(!canvas && !img){
 
-    showToast(
-      "আগে QR তৈরি করুন"
-    );
+    showToast("আগে QR তৈরি করুন");
 
     return;
-
   }
-
 
   try{
 
     let blob;
 
-
     if(canvas){
 
       blob =
-        await new Promise(
-          function(resolve){
+        await new Promise(function(resolve){
 
-            canvas.toBlob(
-              resolve,
-              "image/png"
-            );
+          canvas.toBlob(
+            resolve,
+            "image/png"
+          );
 
-          }
-        );
+        });
 
-    }
-
-    else{
+    }else{
 
       const response =
-        await fetch(
-          img.src
-        );
+        await fetch(img.src);
 
       blob =
         await response.blob();
-
     }
 
 
@@ -1541,15 +1354,9 @@ async function shareQR(){
 
       });
 
-      showToast(
-        "Share সম্পন্ন হয়েছে ✓"
-      );
+      showToast("Share সম্পন্ন হয়েছে ✓");
 
-    }
-
-    else if(
-      navigator.share
-    ){
+    }else if(navigator.share){
 
       await navigator.share({
 
@@ -1559,32 +1366,20 @@ async function shareQR(){
 
       });
 
-    }
+    }else{
 
-    else{
-
-      showToast(
-        "এই ডিভাইসে Share support নেই"
-      );
+      showToast("এই ডিভাইসে Share support নেই");
 
     }
-
 
   }catch(error){
 
-    if(
-      error.name !==
-      "AbortError"
-    ){
+    if(error.name !== "AbortError"){
 
-      showToast(
-        "Share করা যায়নি"
-      );
+      showToast("Share করা যায়নি");
 
     }
-
   }
-
 }
 
 
@@ -1596,14 +1391,10 @@ async function copyQRText(){
 
   if(!currentQRText){
 
-    showToast(
-      "আগে QR তৈরি করুন"
-    );
+    showToast("আগে QR তৈরি করুন");
 
     return;
-
   }
-
 
   try{
 
@@ -1616,23 +1407,14 @@ async function copyQRText(){
         currentQRText
       );
 
-      showToast(
-        "QR data Copy হয়েছে ✓"
-      );
+      showToast("QR data Copy হয়েছে ✓");
 
       return;
-
     }
 
 
-    /*
-      Fallback copy
-    */
-
     const textarea =
-      document.createElement(
-        "textarea"
-      );
+      document.createElement("textarea");
 
     textarea.value =
       currentQRText;
@@ -1643,37 +1425,23 @@ async function copyQRText(){
     textarea.style.left =
       "-9999px";
 
-
-    document.body.appendChild(
-      textarea
-    );
+    document.body.appendChild(textarea);
 
     textarea.focus();
 
     textarea.select();
 
-    document.execCommand(
-      "copy"
-    );
+    document.execCommand("copy");
 
-    document.body.removeChild(
-      textarea
-    );
+    document.body.removeChild(textarea);
 
-
-    showToast(
-      "QR data Copy হয়েছে ✓"
-    );
-
+    showToast("QR data Copy হয়েছে ✓");
 
   }catch(error){
 
-    showToast(
-      "Copy করা যায়নি"
-    );
+    showToast("Copy করা যায়নি");
 
   }
-
 }
 
 
@@ -1683,49 +1451,32 @@ async function copyQRText(){
 
 function toggleTheme(){
 
-  document.body.classList.toggle(
-    "dark"
-  );
+  document.body.classList.toggle("dark");
 
   const dark =
-    document.body.classList.contains(
-      "dark"
-    );
-
+    document.body.classList.contains("dark");
 
   localStorage.setItem(
     "qrMasterDark",
     dark ? "1" : "0"
   );
 
-
   document.getElementById(
     "themeBtn"
   ).textContent =
     dark ? "☀️" : "🌙";
-
 }
 
 
-/* =========================
-   LOAD DARK MODE
-========================= */
-
 if(
-  localStorage.getItem(
-    "qrMasterDark"
-  ) === "1"
+  localStorage.getItem("qrMasterDark") === "1"
 ){
 
-  document.body.classList.add(
-    "dark"
-  );
+  document.body.classList.add("dark");
 
   document.getElementById(
     "themeBtn"
-  ).textContent =
-    "☀️";
-
+  ).textContent = "☀️";
 }
 
 
@@ -1737,31 +1488,11 @@ function escapeHTML(text){
 
   return String(text)
 
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-
-    .replace(
-      /</g,
-      "&lt;"
-    )
-
-    .replace(
-      />/g,
-      "&gt;"
-    )
-
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-
-    .replace(
-      /'/g,
-      "&#039;"
-    );
-
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
 }
 
 
@@ -1772,32 +1503,21 @@ function escapeHTML(text){
 function showToast(message){
 
   const toast =
-    document.getElementById(
-      "toast"
-    );
+    document.getElementById("toast");
 
   toast.textContent =
     message;
 
-  toast.classList.add(
-    "show"
-  );
+  toast.classList.add("show");
 
-
-  clearTimeout(
-    window.toastTimer
-  );
-
+  clearTimeout(window.toastTimer);
 
   window.toastTimer =
     setTimeout(function(){
 
-      toast.classList.remove(
-        "show"
-      );
+      toast.classList.remove("show");
 
     },2500);
-
 }
 
 
