@@ -2,23 +2,24 @@
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#6c5ce7">
-<meta name="description" content="QR Master - বাংলা ও ইংরেজি QR Code Generator">
-<title>QR Master - QR Code Generator</title>
+
+<title>QR Master - Smart QR Code Generator</title>
 
 <style>
 *{
   box-sizing:border-box;
   margin:0;
   padding:0;
-  font-family:Arial,"Noto Sans Bengali","Segoe UI",sans-serif;
+  font-family:Arial,"Noto Sans Bengali","Noto Sans",sans-serif;
 }
 
 body{
   background:#f5f7fb;
   color:#182033;
   min-height:100vh;
+  transition:.25s;
 }
 
 body.dark{
@@ -28,7 +29,7 @@ body.dark{
 
 .app{
   width:100%;
-  max-width:520px;
+  max-width:540px;
   margin:auto;
   min-height:100vh;
   padding-bottom:35px;
@@ -37,7 +38,7 @@ body.dark{
 .header{
   background:linear-gradient(135deg,#6c5ce7,#4834d4);
   color:white;
-  padding:22px 18px 26px;
+  padding:22px 18px 28px;
   border-radius:0 0 30px 30px;
 }
 
@@ -54,15 +55,15 @@ body.dark{
 }
 
 .logo{
-  width:48px;
-  height:48px;
+  width:50px;
+  height:50px;
   border-radius:15px;
   background:white;
   color:#6c5ce7;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:27px;
+  font-size:28px;
   font-weight:bold;
 }
 
@@ -77,8 +78,8 @@ body.dark{
 }
 
 .theme{
-  width:42px;
-  height:42px;
+  width:43px;
+  height:43px;
   border:0;
   border-radius:50%;
   background:rgba(255,255,255,.18);
@@ -92,11 +93,11 @@ body.dark{
 }
 
 .intro h2{
-  font-size:25px;
+  font-size:24px;
 }
 
 .intro p{
-  margin-top:5px;
+  margin-top:6px;
   font-size:13px;
   opacity:.85;
 }
@@ -114,7 +115,7 @@ body.dark{
 
 .tab{
   border:0;
-  padding:12px 5px;
+  padding:12px 4px;
   border-radius:12px;
   background:white;
   color:#4b5563;
@@ -175,7 +176,7 @@ select{
 }
 
 textarea{
-  min-height:110px;
+  min-height:105px;
   resize:vertical;
 }
 
@@ -185,6 +186,25 @@ textarea{
   background:#0f172a;
   color:white;
   border-color:#334155;
+}
+
+.color-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.color-box{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.color-box input[type="color"]{
+  width:55px;
+  height:43px;
+  padding:3px;
+  margin:0;
 }
 
 .generate{
@@ -197,16 +217,11 @@ textarea{
   font-size:16px;
   font-weight:bold;
   cursor:pointer;
-  transition:.2s;
+  margin-top:4px;
 }
 
 .generate:disabled{
-  opacity:.7;
-  cursor:wait;
-}
-
-.generate:active{
-  transform:scale(.98);
+  opacity:.65;
 }
 
 .qr-card{
@@ -234,51 +249,22 @@ textarea{
 }
 
 #qrcode{
-  width:230px;
-  height:230px;
+  width:260px;
+  height:260px;
   margin:auto;
-  padding:10px;
+  padding:15px;
   background:white;
-  border-radius:15px;
+  border-radius:17px;
   display:flex;
   align-items:center;
   justify-content:center;
+  overflow:hidden;
 }
 
-#qrcode img,
 #qrcode canvas{
-  width:210px !important;
-  height:210px !important;
-  max-width:210px;
-  max-height:210px;
   display:block;
-}
-
-.qr-loading{
-  width:210px;
-  height:210px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  color:#6c5ce7;
-  font-size:13px;
-  gap:10px;
-}
-
-.spinner{
-  width:32px;
-  height:32px;
-  border:4px solid #e5e7eb;
-  border-top-color:#6c5ce7;
-  border-radius:50%;
-  animation:spin .8s linear infinite;
-}
-
-@keyframes spin{
-  to{
-    transform:rotate(360deg);
-  }
+  max-width:100%;
+  max-height:100%;
 }
 
 .actions{
@@ -301,6 +287,11 @@ textarea{
 .dark .action{
   background:#252f49;
   color:#ddd6fe;
+}
+
+.action:active,
+.generate:active{
+  transform:scale(.98);
 }
 
 .history{
@@ -343,7 +334,7 @@ textarea{
 }
 
 .history-text{
-  max-width:75%;
+  max-width:78%;
   overflow:hidden;
 }
 
@@ -389,6 +380,23 @@ textarea{
   line-height:1.6;
 }
 
+.loader{
+  display:none;
+  margin:10px auto;
+  width:25px;
+  height:25px;
+  border:3px solid #ddd6fe;
+  border-top-color:#6c5ce7;
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+}
+
+@keyframes spin{
+  to{
+    transform:rotate(360deg);
+  }
+}
+
 .toast{
   position:fixed;
   left:50%;
@@ -416,6 +424,11 @@ textarea{
   .tabs{
     grid-template-columns:repeat(2,1fr);
   }
+
+  #qrcode{
+    width:235px;
+    height:235px;
+  }
 }
 </style>
 </head>
@@ -439,10 +452,7 @@ textarea{
 
     </div>
 
-    <button
-      class="theme"
-      onclick="toggleTheme()"
-      id="themeBtn">
+    <button class="theme" onclick="toggleTheme()" id="themeBtn">
       🌙
     </button>
 
@@ -450,10 +460,11 @@ textarea{
 
   <div class="intro">
     <h2>আপনার QR Code তৈরি করুন</h2>
-    <p>বাংলা, English এবং Emoji সহ দ্রুত QR তৈরি করুন</p>
+    <p>দ্রুত, সহজ এবং সুন্দরভাবে</p>
   </div>
 
 </header>
+
 
 <main class="content">
 
@@ -483,195 +494,355 @@ textarea{
     👤 Contact
   </button>
 
-</div>
+  <button class="tab" onclick="selectType('sms',this)">
+    💬 SMS
+  </button>
 
-<div class="panel">
+  <button class="tab" onclick="selectType('whatsapp',this)">
+    🟢 WhatsApp
+  </button>
 
-  <div class="type active" id="url">
-
-    <label>Website URL</label>
-
-    <input
-      id="urlInput"
-      type="url"
-      placeholder="https://example.com">
-
-  </div>
-
-  <div class="type" id="text">
-
-    <label>Your Text</label>
-
-    <textarea
-      id="textInput"
-      placeholder="বাংলা বা English লেখা এখানে লিখুন..."></textarea>
-
-  </div>
-
-  <div class="type" id="phone">
-
-    <label>Phone Number</label>
-
-    <input
-      id="phoneInput"
-      type="tel"
-      placeholder="+8801XXXXXXXXX">
-
-  </div>
-
-  <div class="type" id="email">
-
-    <label>Email Address</label>
-
-    <input
-      id="emailInput"
-      type="email"
-      placeholder="example@email.com">
-
-    <label>Subject</label>
-
-    <input
-      id="emailSubject"
-      type="text"
-      placeholder="Email subject">
-
-  </div>
-
-  <div class="type" id="wifi">
-
-    <label>Wi-Fi Name / SSID</label>
-
-    <input
-      id="wifiName"
-      type="text"
-      placeholder="Wi-Fi name">
-
-    <label>Wi-Fi Password</label>
-
-    <input
-      id="wifiPassword"
-      type="text"
-      placeholder="Wi-Fi password">
-
-    <label>Security</label>
-
-    <select id="wifiSecurity">
-
-      <option value="WPA">WPA/WPA2</option>
-      <option value="WEP">WEP</option>
-      <option value="nopass">No Password</option>
-
-    </select>
-
-    <label>
-
-      <input
-        id="wifiHidden"
-        type="checkbox"
-        style="width:auto;margin:0 5px 0 0">
-
-      Hidden Network
-
-    </label>
-
-  </div>
-
-  <div class="type" id="contact">
-
-    <label>Full Name</label>
-
-    <input
-      id="contactName"
-      type="text"
-      placeholder="আপনার নাম / Your name">
-
-    <label>Phone</label>
-
-    <input
-      id="contactPhone"
-      type="tel"
-      placeholder="+8801XXXXXXXXX">
-
-    <label>Email</label>
-
-    <input
-      id="contactEmail"
-      type="email"
-      placeholder="example@email.com">
-
-    <label>Organization</label>
-
-    <input
-      id="contactOrg"
-      type="text"
-      placeholder="Company / Organization">
-
-  </div>
-
-  <button
-    class="generate"
-    id="generateBtn"
-    onclick="generateQR()">
-
-    ✨ Generate QR Code
-
+  <button class="tab" onclick="selectType('location',this)">
+    📍 Location
   </button>
 
 </div>
 
-<div class="qr-card" id="qrCard">
 
-  <div class="qr-title">
-    Your QR Code
-  </div>
+<div class="panel">
 
-  <div id="qrcode"></div>
+<!-- WEBSITE -->
 
-  <div class="actions">
+<div class="type active" id="url">
 
-    <button class="action" onclick="downloadQR()">
-      ⬇️ Download
-    </button>
+<label>Website URL</label>
 
-    <button class="action" onclick="shareQR()">
-      📤 Share
-    </button>
-
-    <button class="action" onclick="copyQRText()">
-      📋 Copy
-    </button>
-
-    <button class="action" onclick="generateQR()">
-      🔄 Refresh
-    </button>
-
-  </div>
+<input
+ id="urlInput"
+ type="url"
+ placeholder="https://example.com">
 
 </div>
+
+
+<!-- TEXT -->
+
+<div class="type" id="text">
+
+<label>Your Text</label>
+
+<textarea
+ id="textInput"
+ placeholder="আপনার লেখা এখানে লিখুন..."></textarea>
+
+</div>
+
+
+<!-- PHONE -->
+
+<div class="type" id="phone">
+
+<label>Phone Number</label>
+
+<input
+ id="phoneInput"
+ type="tel"
+ placeholder="+8801XXXXXXXXX">
+
+</div>
+
+
+<!-- EMAIL -->
+
+<div class="type" id="email">
+
+<label>Email Address</label>
+
+<input
+ id="emailInput"
+ type="email"
+ placeholder="example@email.com">
+
+<label>Subject</label>
+
+<input
+ id="emailSubject"
+ type="text"
+ placeholder="Email subject">
+
+<label>Message</label>
+
+<textarea
+ id="emailMessage"
+ placeholder="Email message"></textarea>
+
+</div>
+
+
+<!-- WIFI -->
+
+<div class="type" id="wifi">
+
+<label>Wi-Fi Name / SSID</label>
+
+<input
+ id="wifiName"
+ type="text"
+ placeholder="Wi-Fi name">
+
+<label>Wi-Fi Password</label>
+
+<input
+ id="wifiPassword"
+ type="text"
+ placeholder="Wi-Fi password">
+
+<label>Security</label>
+
+<select id="wifiSecurity">
+
+<option value="WPA">WPA/WPA2</option>
+<option value="WEP">WEP</option>
+<option value="nopass">No Password</option>
+
+</select>
+
+<label style="font-weight:normal">
+
+<input
+ id="wifiHidden"
+ type="checkbox"
+ style="width:auto;margin:0 5px 0 0">
+
+Hidden Network
+
+</label>
+
+</div>
+
+
+<!-- CONTACT -->
+
+<div class="type" id="contact">
+
+<label>Full Name</label>
+
+<input
+ id="contactName"
+ type="text"
+ placeholder="আপনার নাম / Your Name">
+
+<label>Phone</label>
+
+<input
+ id="contactPhone"
+ type="tel"
+ placeholder="+8801XXXXXXXXX">
+
+<label>Email</label>
+
+<input
+ id="contactEmail"
+ type="email"
+ placeholder="example@email.com">
+
+<label>Organization</label>
+
+<input
+ id="contactOrg"
+ type="text"
+ placeholder="প্রতিষ্ঠানের নাম / Organization">
+
+</div>
+
+
+<!-- SMS -->
+
+<div class="type" id="sms">
+
+<label>Phone Number</label>
+
+<input
+ id="smsPhone"
+ type="tel"
+ placeholder="+8801XXXXXXXXX">
+
+<label>Message</label>
+
+<textarea
+ id="smsMessage"
+ placeholder="আপনার SMS লিখুন..."></textarea>
+
+</div>
+
+
+<!-- WHATSAPP -->
+
+<div class="type" id="whatsapp">
+
+<label>WhatsApp Number</label>
+
+<input
+ id="whatsappPhone"
+ type="tel"
+ placeholder="8801XXXXXXXXX">
+
+<label>Message</label>
+
+<textarea
+ id="whatsappMessage"
+ placeholder="WhatsApp message লিখুন..."></textarea>
+
+</div>
+
+
+<!-- LOCATION -->
+
+<div class="type" id="location">
+
+<label>Latitude</label>
+
+<input
+ id="latitude"
+ type="text"
+ placeholder="23.8103">
+
+<label>Longitude</label>
+
+<input
+ id="longitude"
+ type="text"
+ placeholder="90.4125">
+
+<p style="font-size:11px;color:#64748b;margin-bottom:13px">
+উদাহরণ: Dhaka = 23.8103, 90.4125
+</p>
+
+</div>
+
+
+<!-- QR OPTIONS -->
+
+<label style="margin-top:4px">
+QR Code Options
+</label>
+
+<div class="color-row">
+
+<div class="color-box">
+
+<label style="margin:0;font-size:12px">
+Dark
+</label>
+
+<input
+ id="darkColor"
+ type="color"
+ value="#111827">
+
+</div>
+
+<div class="color-box">
+
+<label style="margin:0;font-size:12px">
+Light
+</label>
+
+<input
+ id="lightColor"
+ type="color"
+ value="#ffffff">
+
+</div>
+
+</div>
+
+
+<label>QR Size</label>
+
+<select id="qrSize">
+
+<option value="210">Small</option>
+<option value="260" selected>Medium</option>
+<option value="320">Large</option>
+
+</select>
+
+
+<div class="loader" id="loader"></div>
+
+
+<button
+ class="generate"
+ id="generateBtn"
+ onclick="generateQR()">
+
+✨ Generate QR Code
+
+</button>
+
+</div>
+
+
+<!-- RESULT -->
+
+<div class="qr-card" id="qrCard">
+
+<div class="qr-title">
+Your QR Code
+</div>
+
+<div id="qrcode"></div>
+
+<div class="actions">
+
+<button class="action" onclick="downloadQR()">
+⬇️ Download
+</button>
+
+<button class="action" onclick="shareQR()">
+📤 Share
+</button>
+
+<button class="action" onclick="copyQRText()">
+📋 Copy
+</button>
+
+<button class="action" onclick="generateQR()">
+🔄 Refresh
+</button>
+
+</div>
+
+</div>
+
+
+<!-- HISTORY -->
 
 <div class="history">
 
-  <div class="history-head">
+<div class="history-head">
 
-    <h2>📜 Recent QR</h2>
+<h2>📜 Recent QR</h2>
 
-    <button class="clear" onclick="clearHistory()">
-      Clear
-    </button>
-
-  </div>
-
-  <div id="historyList"></div>
+<button class="clear" onclick="clearHistory()">
+Clear
+</button>
 
 </div>
 
+<div id="historyList"></div>
+
+</div>
+
+
 <div class="footer">
 
-  QR Master © 2026
+QR Master © 2026
 
-  <br>
+<br>
 
-  Create • Save • Share QR Codes
+Create • Save • Share QR Codes
 
 </div>
 
@@ -679,851 +850,800 @@ textarea{
 
 </div>
 
+
 <div class="toast" id="toast"></div>
 
-<!-- QR CODE LIBRARY -->
+
+<!-- QR LIBRARY -->
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
 
 <script>
 
-let currentType = "url";
-let currentQRText = "";
-let generating = false;
+let currentType="url";
+let currentQRText="";
+let currentSize=260;
 
-let history =
-  JSON.parse(
-    localStorage.getItem("qrMasterHistory") || "[]"
-  );
+let history=JSON.parse(
+ localStorage.getItem("qrMasterHistory") || "[]"
+);
 
 
-/* =========================
-   SELECT TYPE
-========================= */
+/* TYPE */
 
 function selectType(type,button){
 
-  currentType = type;
+ currentType=type;
 
-  document
-    .querySelectorAll(".type")
-    .forEach(function(el){
-      el.classList.remove("active");
-    });
+ document.querySelectorAll(".type")
+ .forEach(function(el){
+   el.classList.remove("active");
+ });
 
-  const selected =
-    document.getElementById(type);
+ document.getElementById(type)
+ .classList.add("active");
 
-  if(selected){
-    selected.classList.add("active");
-  }
+ document.querySelectorAll(".tab")
+ .forEach(function(el){
+   el.classList.remove("active");
+ });
 
-  document
-    .querySelectorAll(".tab")
-    .forEach(function(el){
-      el.classList.remove("active");
-    });
+ button.classList.add("active");
 
-  button.classList.add("active");
 }
 
 
-/* =========================
-   GET QR TEXT
-========================= */
-
-function getQRText(){
-
-  if(currentType === "url"){
-
-    let value =
-      document
-      .getElementById("urlInput")
-      .value
-      .trim();
-
-    if(!value){
-      showToast("Website URL লিখুন");
-      return null;
-    }
-
-    if(
-      !value.startsWith("http://") &&
-      !value.startsWith("https://")
-    ){
-      value = "https://" + value;
-    }
-
-    return value;
-  }
-
-
-  if(currentType === "text"){
-
-    const value =
-      document
-      .getElementById("textInput")
-      .value;
-
-    if(!value.trim()){
-      showToast("বাংলা বা English Text লিখুন");
-      return null;
-    }
-
-    /*
-      Unicode text সরাসরি পাঠানো হচ্ছে।
-      বাংলা অক্ষর এখানে পরিবর্তন করা হচ্ছে না।
-    */
-
-    return value;
-  }
-
-
-  if(currentType === "phone"){
-
-    const value =
-      document
-      .getElementById("phoneInput")
-      .value
-      .trim();
-
-    if(!value){
-      showToast("Phone number লিখুন");
-      return null;
-    }
-
-    return "tel:" + value;
-  }
-
-
-  if(currentType === "email"){
-
-    const email =
-      document
-      .getElementById("emailInput")
-      .value
-      .trim();
-
-    const subject =
-      document
-      .getElementById("emailSubject")
-      .value
-      .trim();
-
-    if(!email){
-      showToast("Email address লিখুন");
-      return null;
-    }
-
-    return (
-      "mailto:" +
-      email +
-      "?subject=" +
-      encodeURIComponent(subject)
-    );
-  }
-
-
-  if(currentType === "wifi"){
-
-    const ssid =
-      document
-      .getElementById("wifiName")
-      .value
-      .trim();
-
-    const password =
-      document
-      .getElementById("wifiPassword")
-      .value;
-
-    const security =
-      document
-      .getElementById("wifiSecurity")
-      .value;
-
-    const hidden =
-      document
-      .getElementById("wifiHidden")
-      .checked;
-
-    if(!ssid){
-      showToast("Wi-Fi name লিখুন");
-      return null;
-    }
-
-    return (
-      "WIFI:" +
-      "T:" + security +
-      ";S:" + escapeWifi(ssid) +
-      ";P:" + escapeWifi(password) +
-      ";H:" + (hidden ? "true" : "false") +
-      ";;"
-    );
-  }
-
-
-  if(currentType === "contact"){
-
-    const name =
-      document
-      .getElementById("contactName")
-      .value
-      .trim();
-
-    const phone =
-      document
-      .getElementById("contactPhone")
-      .value
-      .trim();
-
-    const email =
-      document
-      .getElementById("contactEmail")
-      .value
-      .trim();
-
-    const org =
-      document
-      .getElementById("contactOrg")
-      .value
-      .trim();
-
-    if(!name && !phone && !email){
-      showToast("Contact information দিন");
-      return null;
-    }
-
-    return (
-      "BEGIN:VCARD\n" +
-      "VERSION:3.0\n" +
-      "FN:" + name + "\n" +
-      "TEL:" + phone + "\n" +
-      "EMAIL:" + email + "\n" +
-      "ORG:" + org + "\n" +
-      "END:VCARD"
-    );
-  }
-
-  return null;
-}
-
-
-/* =========================
-   WIFI ESCAPE
-========================= */
+/* WIFI ESCAPE */
 
 function escapeWifi(value){
 
-  return String(value)
-    .replace(/\\/g,"\\\\")
-    .replace(/;/g,"\\;")
-    .replace(/,/g,"\\,")
-    .replace(/:/g,"\\:");
+ return String(value)
+ .replace(/\\/g,"\\\\")
+ .replace(/;/g,"\\;")
+ .replace(/,/g,"\\,")
+ .replace(/:/g,"\\:");
 
 }
 
 
-/* =========================
-   GENERATE QR
-========================= */
+/* GET DATA */
+
+function getQRText(){
+
+ if(currentType==="url"){
+
+   let value=document
+   .getElementById("urlInput")
+   .value.trim();
+
+   if(!value){
+     showToast("Website URL লিখুন");
+     return null;
+   }
+
+   if(
+     !value.startsWith("http://") &&
+     !value.startsWith("https://")
+   ){
+     value="https://"+value;
+   }
+
+   return value;
+ }
+
+
+ if(currentType==="text"){
+
+   let value=document
+   .getElementById("textInput")
+   .value.trim();
+
+   if(!value){
+     showToast("Text লিখুন");
+     return null;
+   }
+
+   return value;
+ }
+
+
+ if(currentType==="phone"){
+
+   let value=document
+   .getElementById("phoneInput")
+   .value.trim();
+
+   if(!value){
+     showToast("Phone number লিখুন");
+     return null;
+   }
+
+   return "tel:"+value;
+ }
+
+
+ if(currentType==="email"){
+
+   let email=document
+   .getElementById("emailInput")
+   .value.trim();
+
+   let subject=document
+   .getElementById("emailSubject")
+   .value.trim();
+
+   let message=document
+   .getElementById("emailMessage")
+   .value.trim();
+
+   if(!email){
+     showToast("Email address লিখুন");
+     return null;
+   }
+
+   return "mailto:"+email+
+   "?subject="+encodeURIComponent(subject)+
+   "&body="+encodeURIComponent(message);
+ }
+
+
+ if(currentType==="wifi"){
+
+   let ssid=document
+   .getElementById("wifiName")
+   .value.trim();
+
+   let password=document
+   .getElementById("wifiPassword")
+   .value;
+
+   let security=document
+   .getElementById("wifiSecurity")
+   .value;
+
+   let hidden=document
+   .getElementById("wifiHidden")
+   .checked;
+
+   if(!ssid){
+     showToast("Wi-Fi name লিখুন");
+     return null;
+   }
+
+   return "WIFI:"+
+   "T:"+security+
+   ";S:"+escapeWifi(ssid)+
+   ";P:"+escapeWifi(password)+
+   ";H:"+(hidden?"true":"false")+
+   ";;";
+ }
+
+
+ /* CONTACT */
+
+ if(currentType==="contact"){
+
+   let name=document
+   .getElementById("contactName")
+   .value.trim();
+
+   let phone=document
+   .getElementById("contactPhone")
+   .value.trim();
+
+   let email=document
+   .getElementById("contactEmail")
+   .value.trim();
+
+   let org=document
+   .getElementById("contactOrg")
+   .value.trim();
+
+   if(!name && !phone && !email){
+
+     showToast("Contact information দিন");
+
+     return null;
+   }
+
+   /*
+    বাংলা/ইংরেজি Contact
+    UTF-8 support
+   */
+
+   return (
+     "BEGIN:VCARD\r\n"+
+     "VERSION:3.0\r\n"+
+     "CHARSET=UTF-8\r\n"+
+     "FN;CHARSET=UTF-8:"+name+"\r\n"+
+     "N;CHARSET=UTF-8:"+name+";;;;\r\n"+
+     "TEL:"+phone+"\r\n"+
+     "EMAIL:"+email+"\r\n"+
+     "ORG;CHARSET=UTF-8:"+org+"\r\n"+
+     "END:VCARD"
+   );
+ }
+
+
+ /* SMS */
+
+ if(currentType==="sms"){
+
+   let phone=document
+   .getElementById("smsPhone")
+   .value.trim();
+
+   let message=document
+   .getElementById("smsMessage")
+   .value.trim();
+
+   if(!phone){
+     showToast("Phone number লিখুন");
+     return null;
+   }
+
+   return "SMSTO:"+phone+":"+message;
+ }
+
+
+ /* WHATSAPP */
+
+ if(currentType==="whatsapp"){
+
+   let phone=document
+   .getElementById("whatsappPhone")
+   .value.trim();
+
+   let message=document
+   .getElementById("whatsappMessage")
+   .value.trim();
+
+   if(!phone){
+     showToast("WhatsApp number লিখুন");
+     return null;
+   }
+
+   phone=phone.replace(/[^\d]/g,"");
+
+   return "https://wa.me/"+phone+
+   "?text="+encodeURIComponent(message);
+ }
+
+
+ /* LOCATION */
+
+ if(currentType==="location"){
+
+   let lat=document
+   .getElementById("latitude")
+   .value.trim();
+
+   let lon=document
+   .getElementById("longitude")
+   .value.trim();
+
+   if(!lat || !lon){
+
+     showToast("Latitude ও Longitude দিন");
+
+     return null;
+   }
+
+   return "https://www.google.com/maps?q="+
+   encodeURIComponent(lat+","+lon);
+ }
+
+}
+
+
+/* GENERATE */
 
 function generateQR(){
 
-  if(generating){
-    return;
-  }
+ const text=getQRText();
 
-  const text = getQRText();
-
-  if(!text){
-    return;
-  }
-
-  const qrBox =
-    document.getElementById("qrcode");
-
-  const button =
-    document.getElementById("generateBtn");
-
-  if(typeof QRCode === "undefined"){
-
-    showToast("QR Library লোড হচ্ছে, একটু অপেক্ষা করুন...");
-
-    setTimeout(function(){
-      generateQR();
-    },700);
-
-    return;
-  }
-
-  generating = true;
-
-  button.disabled = true;
-  button.innerHTML = "⏳ Generating...";
-
-  qrBox.innerHTML = `
-    <div class="qr-loading">
-      <div class="spinner"></div>
-      <div>QR Code তৈরি হচ্ছে...</div>
-    </div>
-  `;
-
-  document
-    .getElementById("qrCard")
-    .classList.add("show");
+ if(!text) return;
 
 
-  /*
-    setTimeout ব্যবহার করা হয়েছে যাতে
-    Browser আগে Loading UI দেখাতে পারে।
-  */
+ if(typeof QRCode==="undefined"){
 
-  setTimeout(function(){
+   showToast("QR Library লোড হয়নি");
 
-    try{
+   return;
+ }
 
-      qrBox.innerHTML = "";
 
-      currentQRText = text;
+ const btn=document
+ .getElementById("generateBtn");
 
-      new QRCode(qrBox,{
+ const loader=document
+ .getElementById("loader");
 
-        text:text,
 
-        width:210,
+ btn.disabled=true;
+ loader.style.display="block";
 
-        height:210,
 
-        colorDark:"#111827",
+ setTimeout(function(){
 
-        colorLight:"#ffffff",
+   try{
 
-        correctLevel:QRCode.CorrectLevel.H
+     currentQRText=text;
 
-      });
+     currentSize=parseInt(
+       document.getElementById("qrSize").value
+     );
 
-      addHistory(text,currentType);
 
-      showToast("QR Code তৈরি হয়েছে ✓");
+     const darkColor=document
+     .getElementById("darkColor").value;
 
-    }catch(error){
+     const lightColor=document
+     .getElementById("lightColor").value;
 
-      console.error(error);
 
-      qrBox.innerHTML = `
-        <div class="qr-loading">
-          ❌
-          <div>QR তৈরি করা যায়নি</div>
-        </div>
-      `;
+     const box=document
+     .getElementById("qrcode");
 
-      showToast(
-        "এই লেখাটি QR Code-এ তৈরি করা যাচ্ছে না"
-      );
+     box.innerHTML="";
 
-    }
 
-    generating = false;
+     box.style.width=
+       (currentSize+30)+"px";
 
-    button.disabled = false;
-    button.innerHTML = "✨ Generate QR Code";
+     box.style.height=
+       (currentSize+30)+"px";
 
-  },80);
+
+     new QRCode(box,{
+
+       text:text,
+
+       width:currentSize,
+
+       height:currentSize,
+
+       colorDark:darkColor,
+
+       colorLight:lightColor,
+
+       correctLevel:QRCode.CorrectLevel.M
+
+     });
+
+
+     document
+     .getElementById("qrCard")
+     .classList.add("show");
+
+
+     addHistory(text,currentType);
+
+     showToast("QR Code তৈরি হয়েছে ✓");
+
+
+   }catch(error){
+
+     console.error(error);
+
+     showToast("QR Code তৈরি করা যায়নি");
+
+   }
+
+
+   btn.disabled=false;
+
+   loader.style.display="none";
+
+ },80);
 
 }
 
 
-/* =========================
-   HISTORY
-========================= */
+/* HISTORY */
 
 function addHistory(text,type){
 
-  /*
-    একই QR বারবার History-তে না রাখার জন্য
-  */
+ history.unshift({
 
-  history =
-    history.filter(function(item){
-      return item.text !== text;
-    });
+   id:Date.now(),
 
-  history.unshift({
+   type:type,
 
-    id:Date.now(),
+   text:text
 
-    type:type,
+ });
 
-    text:text
+ history=history.slice(0,10);
 
-  });
+ localStorage.setItem(
+   "qrMasterHistory",
+   JSON.stringify(history)
+ );
 
-  history = history.slice(0,10);
+ renderHistory();
 
-  localStorage.setItem(
-    "qrMasterHistory",
-    JSON.stringify(history)
-  );
-
-  renderHistory();
 }
 
 
 function renderHistory(){
 
-  const box =
-    document.getElementById("historyList");
+ const box=document
+ .getElementById("historyList");
 
-  if(history.length === 0){
+ if(history.length===0){
 
-    box.innerHTML = `
-      <div class="empty">
-        📜<br>
-        এখনো কোনো QR তৈরি করা হয়নি
-      </div>
-    `;
+   box.innerHTML=`
+   <div class="empty">
+   📜<br>
+   এখনো কোনো QR তৈরি করা হয়নি
+   </div>`;
 
-    return;
-  }
+   return;
+ }
 
-  box.innerHTML =
-    history.map(function(item){
 
-      return `
+ box.innerHTML=history.map(function(item){
 
-        <div class="history-item">
+   return `
+   <div class="history-item">
 
-          <div class="history-text">
+     <div class="history-text">
 
-            <div class="history-type">
-              ${getTypeName(item.type)}
-            </div>
+       <div class="history-type">
+       ${getTypeName(item.type)}
+       </div>
 
-            <div class="history-value">
-              ${escapeHTML(item.text)}
-            </div>
+       <div class="history-value">
+       ${escapeHTML(item.text)}
+       </div>
 
-          </div>
+     </div>
 
-          <button
-            class="delete"
-            onclick="deleteHistory(${item.id})">
+     <button
+       class="delete"
+       onclick="deleteHistory(${item.id})">
+       🗑️
+     </button>
 
-            🗑️
+   </div>
+   `;
 
-          </button>
+ }).join("");
 
-        </div>
-
-      `;
-
-    }).join("");
 }
 
 
 function getTypeName(type){
 
-  const names = {
+ const names={
 
-    url:"🔗 Website",
+   url:"🔗 Website",
+   text:"📝 Text",
+   phone:"📞 Phone",
+   email:"✉️ Email",
+   wifi:"📶 Wi-Fi",
+   contact:"👤 Contact",
+   sms:"💬 SMS",
+   whatsapp:"🟢 WhatsApp",
+   location:"📍 Location"
 
-    text:"📝 Text",
+ };
 
-    phone:"📞 Phone",
-
-    email:"✉️ Email",
-
-    wifi:"📶 Wi-Fi",
-
-    contact:"👤 Contact"
-
-  };
-
-  return names[type] || "QR Code";
+ return names[type]||"QR Code";
 }
 
 
 function deleteHistory(id){
 
-  history =
-    history.filter(function(item){
-      return item.id !== id;
-    });
+ history=history.filter(function(item){
 
-  localStorage.setItem(
-    "qrMasterHistory",
-    JSON.stringify(history)
-  );
+   return item.id!==id;
 
-  renderHistory();
+ });
+
+ localStorage.setItem(
+   "qrMasterHistory",
+   JSON.stringify(history)
+ );
+
+ renderHistory();
+
+ showToast("History মুছে ফেলা হয়েছে");
+
 }
 
 
 function clearHistory(){
 
-  if(history.length === 0){
+ if(history.length===0){
 
-    showToast("History খালি আছে");
+   showToast("History খালি আছে");
 
-    return;
-  }
+   return;
+ }
 
-  if(confirm("সব History মুছে ফেলবেন?")){
+ if(confirm("সব History মুছে ফেলবেন?")){
 
-    history = [];
+   history=[];
 
-    localStorage.removeItem(
-      "qrMasterHistory"
-    );
+   localStorage.removeItem(
+     "qrMasterHistory"
+   );
 
-    renderHistory();
+   renderHistory();
 
-    showToast("History মুছে ফেলা হয়েছে");
-  }
+   showToast("History মুছে ফেলা হয়েছে");
+
+ }
+
 }
 
 
-/* =========================
-   DOWNLOAD
-========================= */
+/* DOWNLOAD */
 
-async function downloadQR(){
+function downloadQR(){
 
-  const qrBox =
-    document.getElementById("qrcode");
+ const canvas=document
+ .querySelector("#qrcode canvas");
 
-  const canvas =
-    qrBox.querySelector("canvas");
+ if(!canvas){
 
-  const img =
-    qrBox.querySelector("img");
+   showToast("আগে QR তৈরি করুন");
 
-  if(!canvas && !img){
-
-    showToast("আগে QR তৈরি করুন");
-
-    return;
-  }
-
-  try{
-
-    let dataURL;
-
-    if(canvas){
-
-      dataURL =
-        canvas.toDataURL("image/png");
-
-    }else{
-
-      const tempCanvas =
-        document.createElement("canvas");
-
-      const width =
-        img.naturalWidth || 210;
-
-      const height =
-        img.naturalHeight || 210;
-
-      tempCanvas.width = width;
-      tempCanvas.height = height;
-
-      const ctx =
-        tempCanvas.getContext("2d");
-
-      ctx.fillStyle = "#ffffff";
-
-      ctx.fillRect(
-        0,
-        0,
-        width,
-        height
-      );
-
-      ctx.drawImage(
-        img,
-        0,
-        0,
-        width,
-        height
-      );
-
-      dataURL =
-        tempCanvas.toDataURL("image/png");
-    }
+   return;
+ }
 
 
-    const link =
-      document.createElement("a");
+ try{
 
-    link.href = dataURL;
+   const dataURL=canvas.toDataURL(
+     "image/png"
+   );
 
-    link.download =
-      "QR-Master-" +
-      Date.now() +
-      ".png";
+   const link=document
+   .createElement("a");
 
-    document.body.appendChild(link);
+   link.href=dataURL;
 
-    link.click();
+   link.download=
+     "QR-Master-"+Date.now()+".png";
 
-    document.body.removeChild(link);
+   document.body.appendChild(link);
 
-    showToast("QR Code Download হয়েছে ✓");
+   link.click();
 
-  }catch(error){
+   document.body.removeChild(link);
 
-    console.error(error);
+   showToast("QR Code Download হয়েছে ✓");
 
-    showToast("Download করা যায়নি");
+ }catch(error){
 
-  }
+   console.error(error);
+
+   showToast("Download করা যায়নি");
+
+ }
+
 }
 
 
-/* =========================
-   SHARE
-========================= */
+/* SHARE */
 
 async function shareQR(){
 
-  const canvas =
-    document.querySelector("#qrcode canvas");
+ const canvas=document
+ .querySelector("#qrcode canvas");
 
-  const img =
-    document.querySelector("#qrcode img");
+ if(!canvas){
 
-  if(!canvas && !img){
+   showToast("আগে QR তৈরি করুন");
 
-    showToast("আগে QR তৈরি করুন");
-
-    return;
-  }
-
-  try{
-
-    let blob;
-
-    if(canvas){
-
-      blob =
-        await new Promise(function(resolve){
-
-          canvas.toBlob(
-            resolve,
-            "image/png"
-          );
-
-        });
-
-    }else{
-
-      const response =
-        await fetch(img.src);
-
-      blob =
-        await response.blob();
-    }
+   return;
+ }
 
 
-    const file =
-      new File(
-        [blob],
-        "QR-Master.png",
-        {
-          type:"image/png"
-        }
-      );
+ try{
+
+   const blob=await new Promise(
+     function(resolve){
+       canvas.toBlob(
+         resolve,
+         "image/png"
+       );
+     }
+   );
 
 
-    if(
-      navigator.share &&
-      navigator.canShare &&
-      navigator.canShare({
-        files:[file]
-      })
-    ){
+   const file=new File(
+     [blob],
+     "QR-Master.png",
+     {
+       type:"image/png"
+     }
+   );
 
-      await navigator.share({
 
-        title:"QR Master",
+   if(
+     navigator.share &&
+     navigator.canShare &&
+     navigator.canShare({
+       files:[file]
+     })
+   ){
 
-        text:"QR Code",
+     await navigator.share({
 
-        files:[file]
+       title:"QR Master",
 
-      });
+       text:"QR Code",
 
-      showToast("Share সম্পন্ন হয়েছে ✓");
+       files:[file]
 
-    }else if(navigator.share){
+     });
 
-      await navigator.share({
+     return;
+   }
 
-        title:"QR Master",
 
-        text:currentQRText
+   if(navigator.share){
 
-      });
+     await navigator.share({
 
-    }else{
+       title:"QR Master",
 
-      showToast("এই ডিভাইসে Share support নেই");
+       text:currentQRText
 
-    }
+     });
 
-  }catch(error){
+     return;
+   }
 
-    if(error.name !== "AbortError"){
 
-      showToast("Share করা যায়নি");
+   showToast(
+     "এই ব্রাউজারে Share support নেই"
+   );
 
-    }
-  }
+
+ }catch(error){
+
+   if(error.name!=="AbortError"){
+
+     showToast("Share করা যায়নি");
+
+   }
+
+ }
+
 }
 
 
-/* =========================
-   COPY
-========================= */
+/* COPY */
 
 async function copyQRText(){
 
-  if(!currentQRText){
+ if(!currentQRText){
 
-    showToast("আগে QR তৈরি করুন");
+   showToast("আগে QR তৈরি করুন");
 
-    return;
-  }
-
-  try{
-
-    if(
-      navigator.clipboard &&
-      navigator.clipboard.writeText
-    ){
-
-      await navigator.clipboard.writeText(
-        currentQRText
-      );
-
-      showToast("QR data Copy হয়েছে ✓");
-
-      return;
-    }
+   return;
+ }
 
 
-    const textarea =
-      document.createElement("textarea");
+ try{
 
-    textarea.value =
-      currentQRText;
+   await navigator.clipboard.writeText(
+     currentQRText
+   );
 
-    textarea.style.position =
-      "fixed";
+   showToast("QR Data Copy হয়েছে ✓");
 
-    textarea.style.left =
-      "-9999px";
+ }catch(error){
 
-    document.body.appendChild(textarea);
+   const area=document
+   .createElement("textarea");
 
-    textarea.focus();
+   area.value=currentQRText;
 
-    textarea.select();
+   area.style.position="fixed";
+   area.style.left="-9999px";
 
-    document.execCommand("copy");
+   document.body.appendChild(area);
 
-    document.body.removeChild(textarea);
+   area.select();
 
-    showToast("QR data Copy হয়েছে ✓");
+   document.execCommand("copy");
 
-  }catch(error){
+   document.body.removeChild(area);
 
-    showToast("Copy করা যায়নি");
+   showToast("QR Data Copy হয়েছে ✓");
 
-  }
+ }
+
 }
 
 
-/* =========================
-   DARK MODE
-========================= */
+/* DARK MODE */
 
 function toggleTheme(){
 
-  document.body.classList.toggle("dark");
+ document.body.classList.toggle("dark");
 
-  const dark =
-    document.body.classList.contains("dark");
+ const dark=document.body
+ .classList.contains("dark");
 
-  localStorage.setItem(
-    "qrMasterDark",
-    dark ? "1" : "0"
-  );
+ localStorage.setItem(
+   "qrMasterDark",
+   dark?"1":"0"
+ );
 
-  document.getElementById(
-    "themeBtn"
-  ).textContent =
-    dark ? "☀️" : "🌙";
+ document.getElementById(
+   "themeBtn"
+ ).textContent=
+   dark?"☀️":"🌙";
+
 }
 
 
 if(
-  localStorage.getItem("qrMasterDark") === "1"
+ localStorage.getItem("qrMasterDark")==="1"
 ){
 
-  document.body.classList.add("dark");
+ document.body.classList.add("dark");
 
-  document.getElementById(
-    "themeBtn"
-  ).textContent = "☀️";
+ document.getElementById(
+   "themeBtn"
+ ).textContent="☀️";
+
 }
 
 
-/* =========================
-   ESCAPE HTML
-========================= */
+/* HTML SECURITY */
 
 function escapeHTML(text){
 
-  return String(text)
+ return String(text)
 
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
+ .replace(/&/g,"&amp;")
+
+ .replace(/</g,"&lt;")
+
+ .replace(/>/g,"&gt;")
+
+ .replace(/"/g,"&quot;")
+
+ .replace(/'/g,"&#039;");
+
 }
 
 
-/* =========================
-   TOAST
-========================= */
+/* TOAST */
 
 function showToast(message){
 
-  const toast =
-    document.getElementById("toast");
+ const toast=document
+ .getElementById("toast");
 
-  toast.textContent =
-    message;
+ toast.textContent=message;
 
-  toast.classList.add("show");
+ toast.classList.add("show");
 
-  clearTimeout(window.toastTimer);
+ clearTimeout(window.toastTimer);
 
-  window.toastTimer =
-    setTimeout(function(){
+ window.toastTimer=setTimeout(
+   function(){
 
-      toast.classList.remove("show");
+     toast.classList.remove("show");
 
-    },2500);
+   },
+   2500
+ );
+
 }
 
 
-/* =========================
-   START
-========================= */
+/* START */
 
 renderHistory();
 
